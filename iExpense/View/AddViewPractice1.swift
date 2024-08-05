@@ -5,9 +5,11 @@
 //  Created by Fernando Callejas on 03/07/24.
 //
 
+import SwiftData
 import SwiftUI
 
 struct AddViewPractice1: View {
+    @Environment(\.modelContext) var modelContext
     @Environment(\.dismiss) var dismiss
     
     @State private var itemName = ""
@@ -15,8 +17,6 @@ struct AddViewPractice1: View {
     @State private var itemPrice = 0.0
     
     @State private var itemNameNavTitle = "Item Name"
-    
-    var expenses: ExpensesPractice1
     
     var body: some View {
         ZStack {
@@ -56,7 +56,7 @@ struct AddViewPractice1: View {
                 
                 Button("Add Item") {
                     let item = ExpenseItemPractice1(name: itemName, price: itemPrice, category: itemCategory)
-                    expenses.items.append(item)
+                    modelContext.insert(item)
                     dismiss()
                 }
                 .padding()
@@ -74,5 +74,5 @@ struct AddViewPractice1: View {
 }
 
 #Preview {
-    AddViewPractice1(expenses: ExpensesPractice1())
+    AddViewPractice1()
 }

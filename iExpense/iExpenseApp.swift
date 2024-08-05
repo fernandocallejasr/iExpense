@@ -5,6 +5,7 @@
 //  Created by Fernando Callejas on 15/03/24.
 //
 
+import SwiftData
 import SwiftUI
 
 @main
@@ -16,5 +17,6 @@ struct iExpenseApp: App {
 //            CodableStorageUserDefaultsPractice()
             Practice1()
         }
+        .modelContainer(for: ExpensesPractice1.self)
     }
 }

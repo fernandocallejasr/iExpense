@@ -5,18 +5,21 @@
 //  Created by Fernando Callejas on 21/06/24.
 //
 
+import SwiftData
 import SwiftUI
-import Observation
+//import Observation
 
 struct Practice1: View {
-    @State private var expenses = ExpensesPractice1()
+    @Environment(\.modelContext) var modelContext
+    
+    @Query private var expenses: [ExpenseItemPractice1]
     @State private var showsAddNewItem = false
     @State private var pathStore = P1PathStore()
 
     var body: some View {
         NavigationStack(path: $pathStore.path) {
             List {
-                ForEach(expenses.items) { expense in
+                ForEach(expenses) { expense in
                     HStack {
                         VStack(alignment: .leading) {
                             Text(expense.name)
@@ -32,7 +35,7 @@ struct Practice1: View {
                     }
                 }
                 .onDelete { indexSet in
-                    expenses.items.remove(atOffsets: indexSet)
+                    deleteItem(offsets: indexSet)
                 }
             }
             .navigationTitle("iExpense")
@@ -48,12 +51,19 @@ struct Practice1: View {
                 }
             }
             .navigationDestination(for: Int.self) { num in
-                AddViewPractice1(expenses: expenses)
+                AddViewPractice1()
             }
         }
         .sheet(isPresented: $showsAddNewItem, content: {
-            AddViewPractice1(expenses: expenses)
+            AddViewPractice1()
         })
+    }
+    
+    func deleteItem(offsets: IndexSet) {
+        for offset in offsets {
+            let item = expenses[offset]
+            modelContext.delete(item)
+        }
     }
 }
 

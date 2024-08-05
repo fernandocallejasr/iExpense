@@ -6,11 +6,19 @@
 //
 
 import Foundation
-import Observation
+//import Observation
+import SwiftData
 
-struct ExpenseItemPractice1: Identifiable, Codable {
+@Model
+class ExpenseItemPractice1 {
     var id = UUID()
     let name: String
     let price: Double
     let category: ExpenseCategory
+    
+    init(name: String, price: Double, category: ExpenseCategory) {
+        self.name = name
+        self.price = price
+        self.category = category
+    }
 }
