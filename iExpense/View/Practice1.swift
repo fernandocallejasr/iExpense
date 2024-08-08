@@ -15,55 +15,36 @@ struct Practice1: View {
     @Query private var expenses: [ExpenseItemPractice1]
     @State private var showsAddNewItem = false
     @State private var pathStore = P1PathStore()
+    @State private var expensesOrder = SortEnumP1.name
 
     var body: some View {
         NavigationStack(path: $pathStore.path) {
-            List {
-                ForEach(expenses) { expense in
-                    HStack {
-                        VStack(alignment: .leading) {
-                            Text(expense.name)
-                                .font(.headline)
-                            Text(expense.category.rawValue)
-                                .font(.caption)
+            ExpensesViewP1(sortBy: expensesOrder)
+                .navigationTitle("iExpense")
+                .toolbar {
+                    ToolbarItem {
+                        NavigationLink(value: 0) {
+                            Image(systemName: "plus")
                         }
-                        
-                        Spacer()
-                        
-                        Text(expense.price, format: .currency(code: Locale.current.currency?.identifier ?? "MXN"))
-                            .foregroundStyle(expense.price < 100 ? .primary : expense.price < 1000 ? Color.orange : Color.red)
+                    }
+                    ToolbarItem {
+                        Menu("Expenses Order", systemImage: "arrow.up.arrow.down") {
+                            Picker("Expense Order", selection: $expensesOrder) {
+                                Text("Name")
+                                    .tag(SortEnumP1.name)
+                                Text("Amount")
+                                    .tag(SortEnumP1.amount)
+                            }
+                        }
                     }
                 }
-                .onDelete { indexSet in
-                    deleteItem(offsets: indexSet)
+                .navigationDestination(for: Int.self) { num in
+                    AddViewPractice1()
                 }
-            }
-            .navigationTitle("iExpense")
-            .toolbar {
-//                Button("Add Expense", systemImage: "plus") {
-//                    showsAddNewItem.toggle()
-//                }
-                
-                ToolbarItem {
-                    NavigationLink(value: 0) {
-                        Image(systemName: "plus")
-                    }
-                }
-            }
-            .navigationDestination(for: Int.self) { num in
-                AddViewPractice1()
-            }
         }
         .sheet(isPresented: $showsAddNewItem, content: {
             AddViewPractice1()
         })
-    }
-    
-    func deleteItem(offsets: IndexSet) {
-        for offset in offsets {
-            let item = expenses[offset]
-            modelContext.delete(item)
-        }
     }
 }
 
