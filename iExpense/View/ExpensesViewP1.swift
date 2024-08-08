@@ -13,18 +13,35 @@ struct ExpensesViewP1: View {
     
     @Query private var expenses: [ExpenseItemPractice1]
     
-    init(sortBy: SortEnumP1) {
+    init(sortBy: SortEnumP1, filterEnum: FilterEnumP1) {
+        var sortDesciptor: [SortDescriptor<ExpenseItemPractice1>]
+        
         if sortBy == .amount {
-            _expenses = Query(sort: [
+             sortDesciptor = [
                 SortDescriptor(\ExpenseItemPractice1.price, order: .reverse),
                 SortDescriptor(\ExpenseItemPractice1.name, order: .forward)
-            ])
+            ]
         } else {
-            _expenses = Query(sort: [
+            sortDesciptor = [
                 SortDescriptor(\ExpenseItemPractice1.name, order: .forward),
                 SortDescriptor(\ExpenseItemPractice1.price, order: .reverse)
-            ])
+            ]
         }
+        
+        if filterEnum == FilterEnumP1.all {
+            _expenses = Query(filter: #Predicate<ExpenseItemPractice1> { expense in
+                expense.categoryString == "Business" || expense.categoryString == "Personal"
+            }, sort: sortDesciptor)
+        } else if filterEnum == FilterEnumP1.business {
+            _expenses = Query(filter: #Predicate<ExpenseItemPractice1> { expense in
+                expense.categoryString == "Business"
+            }, sort: sortDesciptor)
+        } else if filterEnum == FilterEnumP1.personal {
+            _expenses = Query(filter: #Predicate<ExpenseItemPractice1> { expense in
+                expense.categoryString == "Personal"
+            }, sort: sortDesciptor)
+        }
+        
     }
     
     var body: some View {
@@ -59,5 +76,5 @@ struct ExpensesViewP1: View {
 }
 
 #Preview {
-    ExpensesViewP1(sortBy: SortEnumP1.amount)
+    ExpensesViewP1(sortBy: SortEnumP1.amount, filterEnum: FilterEnumP1.all)
 }

@@ -7,7 +7,6 @@
 
 import SwiftData
 import SwiftUI
-//import Observation
 
 struct Practice1: View {
     @Environment(\.modelContext) var modelContext
@@ -16,10 +15,11 @@ struct Practice1: View {
     @State private var showsAddNewItem = false
     @State private var pathStore = P1PathStore()
     @State private var expensesOrder = SortEnumP1.name
+    @State private var filterExpenses = FilterEnumP1.all
 
     var body: some View {
         NavigationStack(path: $pathStore.path) {
-            ExpensesViewP1(sortBy: expensesOrder)
+            ExpensesViewP1(sortBy: expensesOrder, filterEnum: filterExpenses)
                 .navigationTitle("iExpense")
                 .toolbar {
                     ToolbarItem {
@@ -34,6 +34,15 @@ struct Practice1: View {
                                     .tag(SortEnumP1.name)
                                 Text("Amount")
                                     .tag(SortEnumP1.amount)
+                            }
+                        }
+                    }
+                    ToolbarItem {
+                        Menu("Filter Expenses", systemImage: "loupe") {
+                            Picker("Filter", selection: $filterExpenses) {
+                                ForEach(FilterEnumP1.allCases, id: \.self) { filterCase in
+                                    Text(filterCase.rawValue)
+                                }
                             }
                         }
                     }
